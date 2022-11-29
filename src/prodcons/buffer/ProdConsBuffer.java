@@ -1,30 +1,37 @@
 package prodcons.buffer;
 
 public class ProdConsBuffer implements IProdConsBuffer {
-	int taille ;
+	int BufferSize ;
 	Message buffer[];
+	int in; 
+	int out;
 
-	public ProdConsBuffer(Message buff[], int taille){
-		this.buffer = new Message[taille];
-		this.taille = taille; 
-
-
+	public ProdConsBuffer(Message buff[], int BufferSize){
+		this.buffer = new Message[BufferSize];
+		this.BufferSize = BufferSize; 
+		this.in =0;
+		this.out=0;
 	}
 
 
 
 	@Override
 	public void put(Message m) throws InterruptedException {
-		// TODO Auto-generated method stub
+		while(in == out && in >0 && out>0 ){
+           //wait() 
+		}
+		buffer[in]=m;
+		in = in + 1%BufferSize;
+
+		//notify()
+
+		
 
 	}
 
 	@Override
 	public Message get() throws InterruptedException  {
 
-
-        
-		return ;
 
 	}
 
