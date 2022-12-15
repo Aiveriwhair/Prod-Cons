@@ -9,10 +9,11 @@ public interface IProdConsBuffer {
 	/**
 	 * Retrieve a message from the buffer, following a FIFO order (if M1 was put
 	 * before M2, M1 * is retrieved before M2)
-	 **
-	 * public Message get() throws InterruptedException;
-	 * 
-	 * /** Returns the number of messages currently available in * the buffer
+	 **/
+	public Message get() throws InterruptedException;
+
+	/**
+	 * Returns the number of messages currently available in * the buffer
 	 **/
 	public int nmsg();
 
@@ -21,4 +22,6 @@ public interface IProdConsBuffer {
 	 * its creation
 	 **/
 	public int totmsg();
+
+	public int totmsgout();
 }
