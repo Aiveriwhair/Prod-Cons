@@ -17,7 +17,7 @@ public class Consumer extends Thread {
 		while (true) {
 			try {
 				Thread.sleep(Consumer.consumptionT);
-				buffer.get(4);
+				buffer.get();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

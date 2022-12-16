@@ -49,10 +49,36 @@ public class ProdConsBuffer implements IProdConsBuffer {
 	}
 
 	@Override
+	public void put(Message m, int n) throws InterruptedException {
+		notFull.acquire(n);
+		synchronized (this) {
+			m.nCopies = n;
+			for (int i = 0; i < n; i++) {
+				msgs[in] = m;
+				in = (in + 1) % bufferSize;
+
+			}
+			System.out.println("### PUT " + Thread.currentThread().getId() + "\t" + n + "-copies");
+			currentCount += n;
+			totmsg += n;
+			notEmpty.release(n);
+
+			// Blocker le producer tant que les n copies n'ont pas été consommées
+			while (m.nCopies > 0)
+				wait();
+		}
+	}
+
+	@Override
 	public Message get() throws InterruptedException {
 		notEmpty.acquire();
 		synchronized (this) {
 			Message m = msgs[out];
+			m.nCopies--;
+			// Bloquer le consumer tant que n-1 copies n'ont pas été consommées
+			while (m.nCopies > 0)
+				wait();
+
 			out = (out + 1) % bufferSize;
 			System.out.println("# GET " + Thread.currentThread().getId());
 			currentCount--;
@@ -74,10 +100,10 @@ public class ProdConsBuffer implements IProdConsBuffer {
 			for (int i = 0; i < k; i++) {
 				res[i] = msgs[out];
 				System.out.println("# GET " + Thread.currentThread().getId());
-				currentCount--;
 				out = (out + 1) % bufferSize;
-				totmsgout++;
 			}
+			currentCount -= k;
+			totmsgout += k;
 			notFull.release(k);
 			notifyAll();
 			return res;

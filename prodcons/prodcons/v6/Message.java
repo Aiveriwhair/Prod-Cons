@@ -3,6 +3,7 @@ package prodcons.v6;
 public class Message {
 	String msg;
 	int id;
+	public int nCopies;
 
 	public Message() {
 		this.msg = "undefined";
@@ -12,6 +13,7 @@ public class Message {
 	public Message(int id, String msg) {
 		this.id = id;
 		this.msg = msg;
+		this.nCopies = 1;
 	}
 
 	public String getMsg() {

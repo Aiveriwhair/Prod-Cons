@@ -19,27 +19,36 @@ public class TestProdCons {
 
 	public static void testV6() throws InterruptedException {
 
+		/**
+		 * 
+		 * Attentions aux options, il doit y avoir au moins autant de consumers que le
+		 * nombre max de copies créable par un producer sinon on reste bloqué. La
+		 * bufferSize doit aussi etre suffisante pour accueillir les copies. On met un
+		 * consTime élevé pour montrer que le producer est bien en attente et que les
+		 * consumers aussi.
+		 * 
+		 */
+
+		// La sortie est de la forme :
+		// # PUT (n) avec n l'ID du thread qui a produit le message.
+		// # GET (n) avec n l'ID du thread qui a consommé le message
+		// On voit bien qu'un unique thread consomme 4 threads consécutivement
+
 		IProdConsBuffer buffer = new ProdConsBuffer(propAsInt("bufSz"));
 
 		int nProd = propAsInt("nProd");
 		int prodTime = propAsInt("prodTime");
 		int minProd = propAsInt("minProd");
 		int maxProd = propAsInt("maxProd");
+		int minCopies = propAsInt("minCopies");
+		int maxCopies = propAsInt("maxCopies");
 
-		Producer.setProperties(prodTime, minProd, maxProd);
+		Producer.setProperties(prodTime, minProd, maxProd, minCopies, maxCopies);
 		Producer[] prods = new Producer[nProd];
 		for (int i = 0; i < prods.length; i++) {
 			prods[i] = new Producer(buffer, i);
 		}
 
-		// On a remplacé les get() par des get(4) dans le Consumer
-		// On s'attend donc a ce que les Consumers consomments les Messages par 4
-
-		// La sortie est de la forme :
-		// ### PUT (n) avec n l'ID du thread qui a produit le message.
-		// # GET (n) avec n l'ID du thread qui a consommé le message
-		// On voit bien qu'un unique thread consomme a chaque fois 4 threads
-		// consécutivement
 		int nCons = propAsInt("nCons");
 		int consTime = propAsInt("consTime");
 		Consumer.setProperties(consTime);
@@ -47,6 +56,7 @@ public class TestProdCons {
 		for (int i = 0; i < cons.length; i++) {
 			cons[i] = new Consumer(buffer, 100 + i);
 		}
+
 	}
 
 	public static void main(String[] args) throws InterruptedException, InvalidPropertiesFormatException, IOException {
