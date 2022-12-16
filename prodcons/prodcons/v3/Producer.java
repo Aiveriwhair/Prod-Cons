@@ -1,15 +1,14 @@
-package prodcons.threads;
+package prodcons.v3;
 
-import prodcons.buffer.IProdConsBuffer;
-import prodcons.buffer.Message;
+import java.util.Random;
 
 public class Producer extends Thread {
 
 	private IProdConsBuffer buffer;
 	private int id;
 
-	public static int productionT = 1000;
-	public static int productionN = 5;
+	public static int productionT;
+	public static int minProd, maxProd;
 
 	public Producer(IProdConsBuffer buffer, int id) {
 		this.buffer = buffer;
@@ -17,17 +16,15 @@ public class Producer extends Thread {
 		this.start();
 	}
 
-	public void produce(Message msg) throws InterruptedException {
-		Thread.sleep(Producer.productionT);
-		buffer.put(msg);
-	}
-
 	public void run() {
-		int nMsgToProduce = productionN;
+		int nMsgToProduce = new Random().nextInt(maxProd - minProd + 1) + minProd;
+		int objective = nMsgToProduce;
 		while (nMsgToProduce > 0) {
 			try {
 				System.out.println("> (" + this.id + ") Producing ");
-				this.produce(new Message(this.id, "Produced by " + this.id));
+				Thread.sleep(Producer.productionT);
+				buffer.put(new Message(this.id,
+						"(" + this.id + ") -> (" + Integer.toString(objective - nMsgToProduce) + ")"));
 				System.out.println("> (" + this.id + ") Produced a msg");
 				nMsgToProduce--;
 
@@ -36,6 +33,12 @@ public class Producer extends Thread {
 			}
 		}
 		System.out.println("> (" + this.id + ") Producer finished");
+	}
+
+	public static void setProperties(int prodT, int minP, int maxP) {
+		Producer.productionT = prodT;
+		Producer.minProd = minP;
+		Producer.maxProd = maxP;
 	}
 
 }

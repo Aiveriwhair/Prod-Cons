@@ -1,4 +1,4 @@
-package prodcons.buffer;
+package prodcons.v5;
 
 public class Message {
 	String msg;
